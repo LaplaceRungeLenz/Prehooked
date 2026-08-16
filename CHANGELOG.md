@@ -6,6 +6,8 @@
   the Diamond Hook item texture.
 - Lowered the stationary jump-retract apex from approximately 2.5 blocks to approximately 2 blocks while retaining
   momentum-scaled lift.
+- Clarified the BSD-2-Clause/MIT multi-license boundary, documented exact upstream asset provenance, and embedded the
+  verbatim Hooked MIT notice in release artifacts.
 
 ## 1.0.2-gtnh - 2026-08-16
 

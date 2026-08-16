@@ -58,3 +58,9 @@ Baubles Expanded `2.2.21-GTNH` 和 `2.1.19-GTNH` 环境中验证过。模组只�
 - 若按键无反应，先确认钩爪确实在饰品栏，并检查是否有其他模组占用了 `C`。
 - 若服务器提示缺少模组，确认客户端和服务端都安装同一个 Prehooked JAR，且未移除 Baubles Expanded。
 - 分发包的兼容验证细节见 [VALIDATION.md](VALIDATION.md)。
+
+## 开源许可
+
+本项目采用多许可证结构：Prehooked 新增代码与美术使用 BSD 2-Clause；从指定 Hooked 1.12.2 提交复制或
+改编的代码和资源继续遵守上游 MIT。仓库及发布 JAR 均保留两份完整许可文本；精确的代码、贴图与概念图
+来源范围见仓库根目录的 `NOTICE.md`。上游对 Daniel Astral 与 Terraria 的署名也被完整保留。
