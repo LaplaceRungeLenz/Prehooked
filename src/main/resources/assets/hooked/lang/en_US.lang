@@ -1,0 +1,19 @@
+item.hooked.hook_wood.name=Wooden Hook
+item.hooked.hook_iron.name=Iron Hook
+item.hooked.hook_diamond.name=Diamond Hook
+item.hooked.hook_red.name=Red Hook
+item.hooked.hook_ender.name=Ender Hook
+item.hooked.plant_fiber.name=Plant Fiber
+item.hooked.rope.name=Rope
+item.hooked.iron_chain_link.name=Iron Chain Link
+item.hooked.iron_chain.name=Iron Chain
+
+tooltip.hooked.hook.inhibited=Inhibited: limited to one anchor
+tooltip.hooked.hook_wood.info=A simple solution for ditches and trees.
+tooltip.hooked.hook_iron.info=Two anchors make midair traversal much easier.
+tooltip.hooked.hook_diamond.info=Four anchors and excellent pulling speed.
+tooltip.hooked.hook_red.info=Bounded flight inside the region defined by its anchors.
+tooltip.hooked.hook_ender.info=Fast. Very, very fast.
+tooltip.hooked.controls=%s: fire; sneak + %s: retract aimed hook; jump: retract all
+
+key.hooked.fire=Fire Hook
