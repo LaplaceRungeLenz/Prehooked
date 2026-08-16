@@ -1,0 +1,19 @@
+item.hooked.hook_wood.name=木制钩爪
+item.hooked.hook_iron.name=铁制钩爪
+item.hooked.hook_diamond.name=钻石钩爪
+item.hooked.hook_red.name=红石钩爪
+item.hooked.hook_ender.name=末影钩爪
+item.hooked.plant_fiber.name=植物纤维
+item.hooked.rope.name=绳索
+item.hooked.iron_chain_link.name=铁链节
+item.hooked.iron_chain.name=铁链
+
+tooltip.hooked.hook.inhibited=已限制：最多使用一个锚点
+tooltip.hooked.hook_wood.info=脱离坑洞与攀树的简单方案。
+tooltip.hooked.hook_iron.info=两个锚点可让空中移动更加自如。
+tooltip.hooked.hook_diamond.info=四个锚点与优秀的牵引速度。
+tooltip.hooked.hook_red.info=可在锚点围成的区域内进行受限飞行。
+tooltip.hooked.hook_ender.info=快。非常、非常快。
+tooltip.hooked.controls=%s：发射；潜行 + %s：收回瞄准的钩爪；跳跃：全部收回
+
+key.hooked.fire=发射钩爪
