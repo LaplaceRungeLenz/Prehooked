@@ -6,7 +6,7 @@
     "description": "Prehooked is a Minecraft 1.7.10 port of Hooked with complete grappling hooks and Baubles Expanded integration for GT New Horizons.",
     "version": "${modVersion}",
     "mcversion": "${minecraftVersion}",
-    "url": "",
+    "url": "https://github.com/LaplaceRungeLenz/Prehooked",
     "updateUrl": "",
     "authorList": ["thecodewarrior", "Prehooked contributors"],
     "credits": "Original Hooked design and assets by the Hooked contributors; Daniel Astral for item textures; Terraria for the original hook inspiration.",

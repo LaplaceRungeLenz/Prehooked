@@ -61,4 +61,8 @@ The in-game release self-test is opt-in and inert during normal play. Maintainer
 
 This port is based on upstream commit `2035946b08b15a14224b36d1c46b19cf8391ffd2`. Hooked was created by
 thecodewarrior; upstream credits Daniel Astral for the item textures and Terraria for the hook design inspiration.
-See [NOTICE.md](NOTICE.md) and [LICENSE](LICENSE).
+
+This is a multi-license repository: Prehooked-specific contributions use the [BSD 2-Clause License](LICENSE), while
+code and art copied or adapted from the pinned Hooked revision retain its verbatim
+[MIT License](LICENSES/Hooked-MIT.txt). Both notices are embedded in release JARs. The exact code and asset provenance
+is documented in [NOTICE.md](NOTICE.md).

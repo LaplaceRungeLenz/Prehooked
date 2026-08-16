@@ -6,8 +6,8 @@ Validation date: 2026-08-17 (Asia/Shanghai)
 
 ```text
 File:    prehooked-1.0.3-gtnh.jar
-Size:    96,765 bytes
-SHA-256: 61FE3D5D055E6D08294EBE54669B3CB1A7510CBFCBF133E7CE3628B8DC9011C5
+Size:    99,121 bytes
+SHA-256: DDB135DB446C3D5564836DAACD750916C296A06DAF738F408CB4F6CE1F7DB740
 Target:  Minecraft 1.7.10 / Forge 10.13.4.1614 / Java 8 bytecode
 ```
 
@@ -23,6 +23,11 @@ handling, the two-String Rope recipe, Red Hook geometric constraints, and packet
 Both Diamond Hook chain textures were verified as 16x16 images with their original alpha masks and pixel geometry
 unchanged; all visible gray chain pixels were remapped to the cyan-blue palette used by the existing diamond item art.
 
+The runtime and sources JARs both embed the project BSD 2-Clause license, the provenance notice, and the verbatim
+MIT license from upstream Hooked revision `2035946b08b15a14224b36d1c46b19cf8391ffd2`. The embedded upstream
+license SHA-256 is `002C2696D92B5C8CF956C11072BAA58EAF9F6ADE995C031EA635C6A1EE342AD1`, identical to the
+upstream file and the repository copy in `LICENSES/Hooked-MIT.txt`.
+
 ## GTNH 2.9.0-beta-2 client
 
 - Official full client fixture, Forge `10.13.4.1614`, OpenJDK `21.0.4` through GTNH's modern-Java bootstrap.
@@ -36,7 +41,7 @@ unchanged; all visible gray chain pixels were remapped to the cyan-blue palette 
 
 ```text
 HOOKED_SELF_TEST_PASS baubleSlot=0 woodPlanted=true pullDistance=0.0
-pullVelocity=0.11023393543189161 clientReleaseY=0.5842061485025023
+pullVelocity=0.15915788356999913 clientReleaseY=0.5985136930449182
 redVerticalDelta=1.784025900603595 maxRedCenterStep=0.23052736891295922
 ```
 
