@@ -13,13 +13,6 @@ integrates directly with the Baubles Expanded inventory used by GT New Horizons.
 - Minecraft `1.7.10`, Forge `10.13.4.1614`, Java 8-compatible bytecode.
 - Client and dedicated server must install the same Prehooked JAR. Baubles Expanded is required.
 
-The release is compiled against the older `2.1.19-GTNH` API and uses only the shared `BaublesApi`, `IBauble`, and
-`BaubleType.UNIVERSAL` surface. One binary is therefore used on both tested GTNH versions.
-
-The user-facing mod name, Gradle project name, and release artifact are `Prehooked`. The internal Forge mod ID,
-resource namespace, network channel, and configuration filename remain `hooked` so existing 1.0.0-gtnh test worlds
-and registered items remain compatible.
-
 ## Features and controls
 
 - Wooden, Iron, Diamond, Red, and Ender hooks with their original ranges and anchor counts, plus faster Iron and
