@@ -44,11 +44,7 @@ Use the Java version selected by `.java-version`, then run:
 ```
 
 The build runs formatting, Checkstyle, and 18 unit tests and creates the production and sources JARs under
-`build/libs`. The release candidate was also exercised in complete official GTNH client/server fixtures; see
-[docs/VALIDATION.md](docs/VALIDATION.md) for the exact evidence and checksum.
-
-The in-game release self-test is opt-in and inert during normal play. Maintainers may start a QA client with
-`-Dhooked.selfTest=true`; it must never be enabled in a normal pack launch.
+`build/libs`. 
 
 ## Credits and licensing
 
