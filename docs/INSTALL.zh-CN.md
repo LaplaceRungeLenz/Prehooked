@@ -14,12 +14,6 @@ Baubles Expanded `2.2.21-GTNH` 和 `2.1.19-GTNH` 环境中验证过。模组只�
 4. 确认整合包中存在 Baubles Expanded。GTNH 2.8.4 和 2.9.0-beta-2 已自带所需版本。
 5. 启动游戏。首次启动会生成 `config/hooked.cfg`。
 
-正式文件的 SHA-256 见分发包中的 `SHA256SUMS.txt`；该值会在最终构建后写入。
-
-游戏模组列表、Gradle 项目及发布文件均使用名称 **Prehooked**。为兼容已经用 1.0.0-gtnh 创建或测试的世界，
-内部 Forge 模组 ID、物品注册名、资源域和配置文件仍保留 `hooked`；这不是遗漏，也无需删除
-`config/hooked.cfg`。
-
 ## 饰品栏
 
 钩爪属于 Baubles Expanded 的通用饰品，可以放入可接受通用饰品的槽位。一个玩家同时只能装备一个钩爪；
