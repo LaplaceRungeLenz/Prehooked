@@ -1,6 +1,6 @@
 # Prehooked 1.7.10 / GTNH Port
 
-中文说明见 [docs/INSTALL.zh-CN.md](docs/INSTALL.zh-CN.md)。
+中文说明见 [docs/Introduction.zh-CN.md](docs/Introduction.zh-CN.md)。
 
 Prehooked is a Minecraft 1.7.10 port of the original
 [Hooked](https://github.com/thecodewarrior/Hooked) grappling-hook mod. It keeps the five original hook tiers and
