@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.thecodewarrior.hooked.common.HookEvents;
+import com.thecodewarrior.hooked.common.HookSettings;
 import com.thecodewarrior.hooked.item.ModItems;
 import com.thecodewarrior.hooked.network.HookNetwork;
 import com.thecodewarrior.hooked.network.MessageHookSync;
@@ -47,4 +48,6 @@ public class CommonProxy {
     }
 
     public void enqueueSync(MessageHookSync message) {}
+
+    public void enqueueConfigSync(HookSettings settings) {}
 }

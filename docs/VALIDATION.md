@@ -1,65 +1,72 @@
-# Release validation: Prehooked 1.0.3-gtnh
+# Release validation: Prehooked 1.1.0-gtnh
 
-Validation date: 2026-08-17 (Asia/Shanghai)
+Validation date: 2026-08-21 (Asia/Shanghai)
 
 ## Artifact identity
 
 ```text
-File:    prehooked-1.0.3-gtnh.jar
-Size:    99,121 bytes
-SHA-256: DDB135DB446C3D5564836DAACD750916C296A06DAF738F408CB4F6CE1F7DB740
+File:    prehooked-1.1.0-gtnh.jar
+Size:    113,690 bytes
+SHA-256: 403397B775F6B180470212679CABB4F2ECDCAF226AB5BE5F20481DAB986571E0
 Target:  Minecraft 1.7.10 / Forge 10.13.4.1614 / Java 8 bytecode
 ```
 
-The GTNH 2.9.0-beta-2 client run below used this exact file and checksum.
+This exact local artifact and checksum were copied into every runtime fixture described below. The tagged GitHub
+workflow independently rebuilds the release, attaches both runtime and sources JARs, and generates
+`SHA256SUMS.txt` from the JARs actually attached to that release.
 
 ## Build gate
 
-The build completed successfully with formatting and Checkstyle checks enabled. JUnit reported 18 tests, 0 failures,
-0 errors, and 0 skipped across seven suites. Coverage includes chest-to-crosshair launch geometry, the close-wall
-window, a simulated approximately 2.03-block stationary release apex, hook speeds, anchor NBT and malformed-input
-handling, the two-String Rope recipe, Red Hook geometric constraints, and packet round trips and caps.
+`gradlew spotlessApply build` completed successfully with Spotless and Checkstyle enabled. JUnit reported 25 tests,
+0 failures, 0 errors, and 0 skipped across ten suites. Coverage includes:
 
-Both Diamond Hook chain textures were verified as 16x16 images with their original alpha masks and pixel geometry
-unchanged; all visible gray chain pixels were remapped to the cyan-blue palette used by the existing diamond item art.
+- generated configuration categories, all five per-tier statistics, input clamping, and immutable defaults;
+- authoritative override and local restore behavior, plus configuration-packet round trips, malformed protocols, and
+  empty payloads;
+- hook statistics, chest-to-crosshair launch geometry, close-wall planting, anchor NBT and packet caps;
+- release momentum, rope recipes, and single- and multi-anchor Red Hook geometry.
 
-The runtime and sources JARs both embed the project BSD 2-Clause license, the provenance notice, and the verbatim
-MIT license from upstream Hooked revision `2035946b08b15a14224b36d1c46b19cf8391ffd2`. The embedded upstream
-license SHA-256 is `002C2696D92B5C8CF956C11072BAA58EAF9F6ADE995C031EA635C6A1EE342AD1`, identical to the
-upstream file and the repository copy in `LICENSES/Hooked-MIT.txt`.
+The runtime JAR embeds the project BSD 2-Clause license, provenance notice, and verbatim Hooked MIT license.
 
-## GTNH 2.9.0-beta-2 client
+## GTNH 2.9.0-beta-2 integrated and LAN runtime
 
-- Official full client fixture, Forge `10.13.4.1614`, OpenJDK `21.0.4` through GTNH's modern-Java bootstrap.
-- Forge successfully loaded 323 mod containers with Prehooked and Baubles Expanded `2.2.21-GTNH` present.
-- An integrated world was opened and the opt-in release self-test completed on the logical server thread.
-- Assertions passed: universal Baubles slot 0; equipped-hook lookup; rejection of a second hook; immediate close-wall
-  landing in the fire action; Wooden Hook fire from chest height with its tip at the eye-ray crosshair height; pulling,
-  momentum-scaled boosted retract and client velocity receipt; Red Hook equip, fire, landing, client-predicted
-  movement, server receipt, collision/range bounds, and per-tick smoothness.
+- Official full client fixture with Forge `10.13.4.1614`, Baubles Expanded `2.2.21-GTNH`, and OpenJDK `21.0.4`
+  through GTNH's modern-Java bootstrap.
+- The client joined an integrated server with 323 mod containers, applied the server's authoritative Prehooked
+  settings, and opened that server to LAN on port 25565.
+- Assertions covered universal Baubles lookup and second-hook rejection; close-wall and ordinary Wooden Hook fire;
+  chest origin and eye-ray landing; player pulling; momentum-scaled server release and client velocity receipt; Red
+  Hook equip, landing, client prediction, server input receipt, collision/range bounds, and smooth center movement.
+- The corrected Red Hook prediction produced a maximum nonzero center step of exactly 0.25 blocks, below the 0.251
+  regression threshold that catches the earlier intermittent approximately 0.42-block snap.
 - Final marker:
 
 ```text
 HOOKED_SELF_TEST_PASS baubleSlot=0 woodPlanted=true pullDistance=0.0
 pullVelocity=0.15915788356999913 clientReleaseY=0.5985136930449182
-redVerticalDelta=1.784025900603595 maxRedCenterStep=0.23052736891295922
+redVerticalDelta=0.25 maxRedCenterStep=0.25 lanPort=25565
 ```
 
-The client then saved and closed normally with process exit code 0. Strict Prehooked failure count: 0.
+The client then saved and closed with process exit code 0. Strict Prehooked failure count: 0.
 
-## Prior dedicated-server compatibility baseline
+## Dedicated-server discovery
 
-| GTNH release | Full mod count | Baubles Expanded | Prehooked 1.0.1-gtnh result |
+The exact candidate was launched in both official full server fixtures. With each fixture's untouched `eula=false`,
+Forge completed mod discovery, construction, and PreInitialization before Minecraft stopped at its normal EULA gate.
+This validates dedicated-side class loading without accepting the Mojang EULA on the operator's behalf.
+
+| GTNH release | Full mod count | Baubles Expanded | Prehooked result |
 | --- | ---: | --- | --- |
-| `2.9.0-beta-2` | 295 | `2.2.21-GTNH` | Construction and PreInit completed; 0 strict Hooked errors |
-| `2.8.4` | 288 | `2.1.19-GTNH` | Construction and PreInit completed; 0 strict Hooked errors |
+| `2.9.0-beta-2` | 295 | `2.2.21-GTNH` | 1.1.0 construction and PreInit completed; 0 strict Prehooked errors |
+| `2.8.4` | 288 | `2.1.19-GTNH` | 1.1.0 construction and PreInit completed; 0 strict Prehooked errors |
 
-These earlier dedicated-server discovery tests used Prehooked 1.0.1-gtnh and OpenJDK `21.0.4`. Version 1.0.3-gtnh
-does not change its dependencies, mod metadata, or dedicated-server entry points. Its current artifact received the
-stronger functional check above: a complete 2.9 integrated-client run with both logical sides active.
+The recorded Prehooked PreInitialization time was 0.025 seconds in both fixtures. A full world start, remote custom
+configuration exchange, and disconnect restore check require the fixture operator to accept the Mojang EULA and are
+reported separately when authorized.
 
 ## Scope
 
-This is strong compatibility evidence for the named pack releases, not a promise about future GTNH snapshots or every
-third-party add-on combination. Re-run the build gate, client self-test, and dedicated-server discovery test after any
-runtime-code or dependency change; the artifact checksum must remain identical across all fixtures.
+This is compatibility evidence for the named pack releases and exact artifact, not a promise about future GTNH
+snapshots or every third-party add-on combination. Re-run the build, integrated/LAN test, dedicated discovery, and
+remote synchronization test after runtime-code or dependency changes; compare checksums before treating different
+files as the same candidate.

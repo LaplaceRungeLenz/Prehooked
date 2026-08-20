@@ -12,3 +12,23 @@ jobs:
   release-tags:
     uses: GTNewHorizons/GTNH-Actions-Workflows/.github/workflows/release-tags.yml@master
     secrets: inherit
+
+  attach-checksums:
+    name: Attach release checksums
+    needs: release-tags
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download released JARs and attach SHA-256 sums
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir release-assets
+          gh release download "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern '*.jar' \
+            --dir release-assets
+          cd release-assets
+          sha256sum -- *.jar > SHA256SUMS.txt
+          gh release upload "$GITHUB_REF_NAME" SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber

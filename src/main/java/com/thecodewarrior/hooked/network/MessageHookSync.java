@@ -10,6 +10,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import com.thecodewarrior.hooked.HookedMod;
 import com.thecodewarrior.hooked.common.HookAnchor;
 import com.thecodewarrior.hooked.common.HookData;
+import com.thecodewarrior.hooked.common.HookStats;
 import com.thecodewarrior.hooked.common.HookStatus;
 import com.thecodewarrior.hooked.common.Vec3;
 
@@ -20,7 +21,7 @@ import io.netty.buffer.ByteBuf;
 
 public final class MessageHookSync implements IMessage {
 
-    private static final int MAX_HOOKS = 16;
+    private static final int MAX_HOOKS = HookStats.MAX_ANCHORS;
 
     private int entityId;
     private int hookTypeOrdinal = -1;

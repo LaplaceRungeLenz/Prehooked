@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0-gtnh - 2026-08-21
+
+- Made hook lookup locations and each hook tier's range, projectile speed, player pull speed, retract speed, and
+  maximum anchor count configurable in `config/hooked.cfg` while preserving all existing defaults.
+- Added an immutable, validated gameplay-settings model with explicit units and safe limits; separated retract speed
+  from player pull speed and corrected remote retract prediction to match the authoritative server.
+- Added server-to-client gameplay configuration synchronization for dedicated, LAN, and integrated servers. Clients
+  now use server values for prediction and automatically restore their local configuration after disconnecting.
+- Hardened configurable motion by range-clamping the initial and interpolated projectile steps, keeping Red Hook
+  geometry at its supported four-anchor limit, and expanding the observer synchronization radius for longer ropes.
+- Corrected Red Hook bounded-flight collision coordinates so its synchronized center advances smoothly without an
+  occasional prediction snap while the player is still catching up to the previous center.
+- Added configuration generation, bounds, override/restore, and network round-trip regression coverage.
+
 ## 1.0.3-gtnh - 2026-08-17
 
 - Recolored both Diamond Hook chain ribbons from the Iron Hook's gray metal palette to the cyan-blue palette used by

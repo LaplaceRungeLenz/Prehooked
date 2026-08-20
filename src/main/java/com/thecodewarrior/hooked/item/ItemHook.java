@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 
 import com.thecodewarrior.hooked.HookedConfig;
 import com.thecodewarrior.hooked.HookedMod;
+import com.thecodewarrior.hooked.common.HookSettings;
 import com.thecodewarrior.hooked.common.HookType;
 
 import baubles.api.BaubleType;
@@ -49,7 +50,8 @@ public final class ItemHook extends Item implements IBauble {
     }
 
     public static ItemStack findUsableHook(EntityPlayer player) {
-        if ((HookedConfig.searchLocations & HookedConfig.SEARCH_BAUBLES) != 0) {
+        int searchLocations = HookedConfig.getSearchLocations();
+        if ((searchLocations & HookSettings.SEARCH_BAUBLES) != 0) {
             IInventory baubles = BaublesApi.getBaubles(player);
             ItemStack found = findInInventory(baubles, 0, baubles == null ? 0 : baubles.getSizeInventory());
             if (found != null) {
@@ -57,21 +59,21 @@ public final class ItemHook extends Item implements IBauble {
             }
         }
 
-        if ((HookedConfig.searchLocations & HookedConfig.SEARCH_HAND) != 0) {
+        if ((searchLocations & HookSettings.SEARCH_HAND) != 0) {
             ItemStack held = player.getHeldItem();
             if (getType(held) != null) {
                 return held;
             }
         }
 
-        if ((HookedConfig.searchLocations & HookedConfig.SEARCH_HOTBAR) != 0) {
+        if ((searchLocations & HookSettings.SEARCH_HOTBAR) != 0) {
             ItemStack found = findInInventory(player.inventory, 0, 9);
             if (found != null) {
                 return found;
             }
         }
 
-        if ((HookedConfig.searchLocations & HookedConfig.SEARCH_INVENTORY) != 0) {
+        if ((searchLocations & HookSettings.SEARCH_INVENTORY) != 0) {
             return findInInventory(player.inventory, 9, 36);
         }
         return null;

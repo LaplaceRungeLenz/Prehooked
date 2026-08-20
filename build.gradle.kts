@@ -3,4 +3,4 @@ plugins {
     id("com.gtnewhorizons.gtnhconvention")
 }
 
-extra["modVersion"] = "1.0.3-gtnh"
+extra["modVersion"] = "1.1.0-gtnh"

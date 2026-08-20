@@ -1,50 +1,61 @@
 package com.thecodewarrior.hooked.common;
 
+import com.thecodewarrior.hooked.HookedConfig;
+
 public enum HookType {
 
-    WOOD(1, 8.0D, 8.0D, 4.0D, 0.5D, 0x8B5A2B),
+    WOOD(1, 8.0D, 0.4D, 0.2D, 0.5D, 0.5D, 0x8B5A2B),
     // Vanilla free fall approaches 3.92 blocks/tick. Iron is slightly slower;
     // Diamond is deliberately faster so it can overtake a falling player.
-    IRON(2, 16.0D, 72.0D, 8.0D, 0.5D, 0xC9CED3),
-    DIAMOND(4, 24.0D, 100.0D, 20.0D, 0.5D, 0x55FFFF),
-    RED(4, 24.0D, 24.0D, 20.0D, 0.5D, 0xFF3030),
-    ENDER(1, 64.0D, 64.0D * 20.0D, 45.0D, 0.5D, 0x9D4EDD);
+    IRON(2, 16.0D, 3.6D, 0.4D, 0.5D, 0.5D, 0xC9CED3),
+    DIAMOND(4, 24.0D, 5.0D, 1.0D, 1.0D, 0.5D, 0x55FFFF),
+    RED(4, 24.0D, 1.2D, 1.0D, 1.0D, 0.5D, 0xFF3030),
+    ENDER(1, 64.0D, 64.0D, 2.25D, 2.25D, 0.5D, 0x9D4EDD);
 
-    private final int count;
-    private final double range;
-    private final double projectileSpeed;
-    private final double pullStrength;
+    private final HookStats defaultStats;
     private final double hookLength;
     private final int color;
 
-    HookType(int count, double range, double blocksPerSecond, double reelBlocksPerSecond, double hookLength,
+    HookType(int count, double range, double projectileSpeed, double pullSpeed, double retractSpeed, double hookLength,
         int color) {
-        this.count = count;
-        this.range = range;
-        this.projectileSpeed = blocksPerSecond / 20.0D;
-        this.pullStrength = reelBlocksPerSecond / 20.0D;
+        this.defaultStats = new HookStats(count, range, projectileSpeed, pullSpeed, retractSpeed);
         this.hookLength = hookLength;
         this.color = color;
     }
 
     public int getCount() {
-        return count;
+        return getStats().getMaxAnchors();
     }
 
     public double getRange() {
-        return range;
+        return getStats().getRange();
     }
 
     public double getRangeSquared() {
+        double range = getRange();
         return range * range;
     }
 
     public double getProjectileSpeed() {
-        return projectileSpeed;
+        return getStats().getProjectileSpeed();
     }
 
+    public double getPullSpeed() {
+        return getStats().getPullSpeed();
+    }
+
+    /** @deprecated Since 1.1.0; use {@link #getPullSpeed()}. */
+    @Deprecated
     public double getPullStrength() {
-        return pullStrength;
+        return getPullSpeed();
+    }
+
+    public double getRetractSpeed() {
+        return getStats().getRetractSpeed();
+    }
+
+    public HookStats getDefaultStats() {
+        return defaultStats;
     }
 
     public double getHookLength() {
@@ -53,6 +64,10 @@ public enum HookType {
 
     public int getColor() {
         return color;
+    }
+
+    private HookStats getStats() {
+        return HookedConfig.getHookStats(this);
     }
 
     public String getSerializedName() {

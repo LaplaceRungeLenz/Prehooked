@@ -159,7 +159,7 @@ public final class HookData implements IExtendedEntityProperties {
         if (HookAim.isCloseSightHit(eye, hitPosition, CLOSE_WALL_SIGHT_DISTANCE)) {
             plantAtHit(hook, aimedHit, start);
         } else {
-            double initialContactReach = type.getProjectileSpeed() + type.getHookLength();
+            double initialContactReach = Math.min(type.getProjectileSpeed(), type.getRange()) + type.getHookLength();
             tryPlant(hook, start.add(direction.scale(initialContactReach)), start);
         }
         updateCenter();
@@ -233,9 +233,10 @@ public final class HookData implements IExtendedEntityProperties {
 
     public void moveRedHook(double strafe, double forward, double vertical) {
         if (player == null || player.worldObj.isRemote && !HookedMod.proxy.isLocalPlayer(player)
-            || !HookedConfig.enableRedHookFlight
+            || !HookedConfig.isRedHookFlightEnabled()
             || hookType != HookType.RED
-            || !hasPlantedHooks()) {
+            || !hasPlantedHooks()
+            || center == null) {
             return;
         }
 
@@ -262,8 +263,15 @@ public final class HookData implements IExtendedEntityProperties {
             return;
         }
 
-        Vec3 requested = Vec3.waist(player)
-            .add(collide(offset));
+        // Advance from the synchronized suspension center, but run collision
+        // against the complete player-to-target displacement. Testing only the
+        // incremental offset incorrectly blocks a descending center whenever the
+        // player's body has already reached the floor below it.
+        Vec3 waist = Vec3.waist(player);
+        Vec3 requested = waist.add(
+            collide(
+                center.add(offset)
+                    .subtract(waist)));
         List<HookAnchor> plantedHooks = getPlantedHooks();
         List<Vec3> anchors = new ArrayList<Vec3>(plantedHooks.size());
         for (HookAnchor hook : plantedHooks) {
@@ -334,7 +342,7 @@ public final class HookData implements IExtendedEntityProperties {
 
         if (!player.worldObj.isRemote) {
             ticksSinceSync++;
-            if (changed || dirty || ticksSinceSync >= HookedConfig.stateSyncInterval && !hooks.isEmpty()) {
+            if (changed || dirty || ticksSinceSync >= HookedConfig.getStateSyncInterval() && !hooks.isEmpty()) {
                 syncNow();
             }
         }
@@ -349,21 +357,29 @@ public final class HookData implements IExtendedEntityProperties {
         while (iterator.hasNext()) {
             HookAnchor hook = iterator.next();
             if (hook.getStatus() == HookStatus.EXTENDING) {
-                hook.setPosition(
+                double distanceLeft = hookType.getRange() - Math.sqrt(
                     hook.getPosition()
-                        .add(
-                            hook.getDirection()
-                                .scale(hookType.getProjectileSpeed())));
+                        .distanceSquared(waist));
+                if (distanceLeft <= 0.0D) {
+                    hook.setStatus(HookStatus.RETRACTING);
+                } else {
+                    double step = Math.min(hookType.getProjectileSpeed(), distanceLeft);
+                    hook.setPosition(
+                        hook.getPosition()
+                            .add(
+                                hook.getDirection()
+                                    .scale(step)));
+                }
             } else if (hook.getStatus() == HookStatus.RETRACTING) {
                 Vec3 relative = waist.subtract(hook.getPosition());
-                if (relative.length() <= hookType.getPullStrength()) {
+                if (relative.length() <= hookType.getRetractSpeed()) {
                     iterator.remove();
                 } else {
                     hook.setPosition(
                         hook.getPosition()
                             .add(
                                 relative.normalize()
-                                    .scale(hookType.getPullStrength())));
+                                    .scale(hookType.getRetractSpeed())));
                 }
             }
         }
@@ -376,7 +392,7 @@ public final class HookData implements IExtendedEntityProperties {
         while (iterator.hasNext()) {
             HookAnchor hook = iterator.next();
             if (hook.getStatus() == HookStatus.RETRACTING) {
-                double speed = Math.max(0.5D, hookType.getPullStrength());
+                double speed = hookType.getRetractSpeed();
                 com.thecodewarrior.hooked.common.Vec3 toPlayer = waist.subtract(hook.getPosition());
                 if (toPlayer.length() <= speed) {
                     iterator.remove();
@@ -542,8 +558,9 @@ public final class HookData implements IExtendedEntityProperties {
             player.fallDistance = 0.0F;
             return;
         }
-        com.thecodewarrior.hooked.common.Vec3 target = pull.clampLength(hookType.getPullStrength());
-        if (distance <= hookType.getPullStrength()) {
+        double pullSpeed = hookType.getPullSpeed();
+        com.thecodewarrior.hooked.common.Vec3 target = pull.clampLength(pullSpeed);
+        if (distance <= pullSpeed) {
             player.motionX = target.x;
             player.motionY = target.y;
             player.motionZ = target.z;
@@ -636,7 +653,12 @@ public final class HookData implements IExtendedEntityProperties {
         MessageHookSync packet = MessageHookSync.fromPlayer(player, this);
         HookNetwork.CHANNEL.sendToAllAround(
             packet,
-            new TargetPoint(player.dimension, player.posX, player.posY, player.posZ, SYNC_RANGE));
+            new TargetPoint(
+                player.dimension,
+                player.posX,
+                player.posY,
+                player.posZ,
+                Math.max(SYNC_RANGE, HookedConfig.getMaximumRange() + 16.0D)));
         ticksSinceSync = 0;
         dirty = false;
     }

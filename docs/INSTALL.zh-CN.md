@@ -9,10 +9,16 @@ Baubles Expanded `2.2.21-GTNH` 和 `2.1.19-GTNH` 环境中验证过。模组只�
 ## 安装
 
 1. 关闭客户端和服务端。
-2. 将 `prehooked-1.0.3-gtnh.jar` 放入客户端实例的 `mods` 目录。
+2. 将 `prehooked-1.1.0-gtnh.jar` 放入客户端实例的 `mods` 目录。
 3. 多人游戏时，也把完全相同的 JAR 放入服务端的 `mods` 目录。
 4. 确认整合包中存在 Baubles Expanded。GTNH 2.8.4 和 2.9.0-beta-2 已自带所需版本。
 5. 启动游戏。首次启动会生成 `config/hooked.cfg`。
+
+正式文件的 SHA-256 见分发包中的 `SHA256SUMS.txt`；该值会在最终构建后写入。
+
+游戏模组列表、Gradle 项目及发布文件均使用名称 **Prehooked**。为兼容已经用 1.0.0-gtnh 创建或测试的世界，
+内部 Forge 模组 ID、物品注册名、资源域和配置文件仍保留 `hooked`；这不是遗漏，也无需删除
+`config/hooked.cfg`。
 
 ## 饰品栏
 
@@ -43,7 +49,27 @@ Baubles Expanded `2.2.21-GTNH` 和 `2.1.19-GTNH` 环境中验证过。模组只�
 - `stateSyncInterval`：活动钩爪状态包的间隔刻数，范围 1–20，默认 2；数值越低，其他玩家看到的绳索越平滑。
 - `enableRedHookFlight`：是否允许红石钩爪的受限移动，默认 `true`。
 
-多人游戏由服务端决定查找范围、红钩移动和锚点状态，建议客户端与服务端保持一致配置。
+每种钩爪分别拥有 `hooks.wood`、`hooks.iron`、`hooks.diamond`、`hooks.red` 和 `hooks.ender` 分类，其中：
+
+- `maxAnchors`：最大同时存在的锚点数，范围 1–16；红石钩爪因受限移动几何算法限制为 1–4。
+- `rangeBlocks`：最大射程及绳长，范围 1–256 格。
+- `projectileSpeedBlocksPerTick`：钩头发射速度，范围 0.01–128 格/tick。
+- `pullSpeedBlocksPerTick`：将玩家拉向已着陆锚点的最大速度，范围 0.01–128 格/tick。
+- `retractSpeedBlocksPerTick`：钩头收回速度，范围 0.01–128 格/tick。
+
+| 类型 | 锚点数 | 射程 | 发射速度 | 玩家牵引速度 | 收钩速度 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 木制 | 1 | 8 | 0.4 | 0.2 | 0.5 |
+| 铁制 | 2 | 16 | 3.6 | 0.4 | 0.5 |
+| 钻石 | 4 | 24 | 5.0 | 1.0 | 1.0 |
+| 红石 | 4 | 24 | 1.2 | 1.0 | 1.0 |
+| 末影 | 1 | 64 | 64.0 | 2.25 | 2.25 |
+
+所有速度单位均为格/tick。配置只在启动时读取，修改后需要重启。
+
+多人游戏中，服务端会在登录和重生时自动同步 `searchLocations`、`enableRedHookFlight` 及上述全部钩爪参数；
+客户端预测和渲染始终采用服务端值，断开连接后自动恢复本地配置。`stateSyncInterval` 只在服务端生效，因此
+客户端与服务端不再需要手动保持相同的 `hooked.cfg`，但仍必须安装完全相同版本的 Prehooked JAR。
 
 ## 存档行为与排错
 

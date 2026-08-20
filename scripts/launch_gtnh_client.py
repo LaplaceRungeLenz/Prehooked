@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import pathlib
 import subprocess
-import sys
 import uuid
 
 
@@ -17,6 +17,7 @@ JAVA = pathlib.Path(r"D:\Eclipse Temurin JDK21\bin\java.exe")
 
 
 def main() -> None:
+    arguments = parse_arguments()
     manifest = json.loads((RUNTIME / "launch-manifest.json").read_text())
     jvm_args = [
         "-Xms1G",
@@ -64,9 +65,12 @@ def main() -> None:
     for package in opened:
         target = package if "=" in package else f"{package}=ALL-UNNAMED"
         jvm_args.extend(["--add-opens", target])
-    self_test = "--self-test" in sys.argv[1:]
+    self_test = arguments.self_test or arguments.lan_test
+    config_sync_test = arguments.config_sync_test
     if self_test:
         jvm_args.append("-Dhooked.selfTest=true")
+        if arguments.lan_test:
+            jvm_args.append("-Dhooked.selfTest.openLan=true")
         qa_worlds = sorted(
             (GAME / "saves").glob("Hooked-QA-*"),
             key=lambda path: path.stat().st_mtime,
@@ -75,6 +79,8 @@ def main() -> None:
         if qa_worlds:
             jvm_args.append(f"-Dhooked.selfTest.world={qa_worlds[0].name}")
             print(f"Reusing QA world {qa_worlds[0].name}", flush=True)
+    if config_sync_test:
+        jvm_args.append("-Dhooked.configSyncTest=true")
 
     classpath = ";".join(manifest["classpath"])
     offline_uuid = uuid.uuid3(uuid.NAMESPACE_DNS, "OfflinePlayer:HookedQA").hex
@@ -100,21 +106,44 @@ def main() -> None:
         "--tweakClass",
         "cpw.mods.fml.common.launcher.FMLTweaker",
     ]
+    if config_sync_test:
+        game_args.extend(["--server", arguments.server, "--port", str(arguments.port)])
     command = [str(JAVA), *jvm_args, "-cp", classpath, "com.gtnewhorizons.retrofuturabootstrap.MainStartOnFirstThread", *game_args]
     (RUNTIME / "last-command.json").write_text(json.dumps(command, indent=2))
     print("Launching verified GTNH client runtime", flush=True)
     fml_log = GAME / "logs" / "fml-client-latest.log"
     result = subprocess.run(command, cwd=GAME)
     if self_test:
-        # FML truncates fml-client-latest.log during startup, so reading from
-        # the pre-launch byte offset can skip the new run's pass marker.
+        # FML truncates fml-client-latest.log during startup, so validate the
+        # complete newly written file instead of retaining a pre-launch offset.
         run_log = fml_log.read_text(encoding="utf-8", errors="replace")
         passed = "HOOKED_SELF_TEST_PASS" in run_log
         failed = "HOOKED_SELF_TEST_FAIL" in run_log
         if not passed or failed:
             print("GTNH Hooked self-test did not pass; inspect fml-client-latest.log", flush=True)
-            sys.exit(2)
-    sys.exit(result.returncode)
+            raise SystemExit(2)
+    if config_sync_test:
+        run_log = fml_log.read_text(encoding="utf-8", errors="replace")
+        passed = "HOOKED_CONFIG_SYNC_TEST_PASS" in run_log
+        failed = "HOOKED_CONFIG_SYNC_TEST_FAIL" in run_log
+        if not passed or failed:
+            print("GTNH Hooked config sync test did not pass; inspect fml-client-latest.log", flush=True)
+            raise SystemExit(3)
+    raise SystemExit(result.returncode)
+
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--self-test", action="store_true", help="run the integrated single-player self-test")
+    parser.add_argument("--lan-test", action="store_true", help="run the self-test with the world opened to LAN")
+    parser.add_argument(
+        "--config-sync-test",
+        action="store_true",
+        help="connect to a remote server and verify configuration synchronization and disconnect recovery",
+    )
+    parser.add_argument("--server", default="127.0.0.1", help="remote test server address")
+    parser.add_argument("--port", type=int, default=25565, choices=range(1, 65536), metavar="PORT")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":

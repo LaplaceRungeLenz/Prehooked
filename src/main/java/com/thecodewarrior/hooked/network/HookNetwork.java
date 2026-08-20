@@ -20,6 +20,7 @@ public final class HookNetwork {
         CHANNEL.registerMessage(MessageRetractAll.Handler.class, MessageRetractAll.class, discriminator++, Side.SERVER);
         CHANNEL
             .registerMessage(MessageRedMovement.Handler.class, MessageRedMovement.class, discriminator++, Side.SERVER);
-        CHANNEL.registerMessage(MessageHookSync.Handler.class, MessageHookSync.class, discriminator, Side.CLIENT);
+        CHANNEL.registerMessage(MessageHookSync.Handler.class, MessageHookSync.class, discriminator++, Side.CLIENT);
+        CHANNEL.registerMessage(MessageConfigSync.Handler.class, MessageConfigSync.class, discriminator, Side.CLIENT);
     }
 }

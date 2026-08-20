@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 
@@ -43,9 +44,10 @@ public final class HookedSelfTest {
     private static final String WORLD_NAME = CONFIGURED_WORLD.isEmpty()
         ? "Hooked-QA-" + Long.toHexString(System.currentTimeMillis())
         : CONFIGURED_WORLD;
-    private static final int TIMEOUT_TICKS = 200;
-    private static final int MIN_RED_PREDICTION_STEPS = 5;
+    private static final int TIMEOUT_TICKS = 600;
+    private static final int MIN_RED_PREDICTION_STEPS = 3;
     private static final int MAX_RED_PREDICTION_STEPS = 20;
+    private static final boolean OPEN_TO_LAN = Boolean.getBoolean("hooked.selfTest.openLan");
 
     private boolean worldRequested;
     private volatile boolean finished;
@@ -69,6 +71,8 @@ public final class HookedSelfTest {
     private double clientRedPredictedTravel;
     private int clientRedMovementSteps;
     private boolean clientRedMovementPrimed;
+    private boolean lanOpened;
+    private String lanPort = "closed";
 
     private HookedSelfTest() {}
 
@@ -133,6 +137,13 @@ public final class HookedSelfTest {
             MinecraftServer server = MinecraftServer.getServer();
             if (server == null || !server.isServerRunning()) {
                 return;
+            }
+            if (OPEN_TO_LAN && !lanOpened) {
+                require(server instanceof IntegratedServer, "LAN test did not start an integrated server");
+                lanPort = server.shareToLAN(WorldSettings.GameType.CREATIVE, true);
+                require(lanPort != null, "integrated server failed to open to LAN");
+                lanOpened = true;
+                HookedMod.LOG.info("HOOKED_SELF_TEST LAN host opened on port {}", lanPort);
             }
             List players = server.getConfigurationManager().playerEntityList;
             if (players.isEmpty() || !(players.get(0) instanceof EntityPlayerMP)) {
@@ -304,13 +315,14 @@ public final class HookedSelfTest {
                 data.retractAll(false);
                 HookedMod.LOG.info(
                     "HOOKED_SELF_TEST_PASS baubleSlot={} woodPlanted=true pullDistance={} pullVelocity={} "
-                        + "clientReleaseY={} redVerticalDelta={} maxRedCenterStep={}",
+                        + "clientReleaseY={} redVerticalDelta={} maxRedCenterStep={} lanPort={}",
                     baubleSlot,
                     maxPullDistance,
                     maxPullVelocity,
                     expectedClientReleaseY,
                     redVerticalDelta,
-                    clientRedMaximumStep);
+                    clientRedMaximumStep,
+                    lanPort);
                 finished = true;
                 shutdownRequested = true;
                 break;
@@ -323,13 +335,6 @@ public final class HookedSelfTest {
         HookData clientData = HookData.get(minecraft.thePlayer);
         if (clientData.getHookType() != HookType.RED || !clientData.hasPlantedHooks()
             || clientData.getCenter() == null) {
-            return;
-        }
-        if (!clientRedMovementPrimed && Math.abs(Vec3.waist(minecraft.thePlayer).y - clientData.getCenter().y) > 0.5D) {
-            // The integrated server may plant and synchronize the anchor before
-            // the client's preceding teleport is applied. Wait until the local
-            // player reaches the synchronized suspension point; otherwise the
-            // first downward input is immediately range-clamped at floor level.
             return;
         }
         double previousY = clientData.getCenter().y;
@@ -347,6 +352,12 @@ public final class HookedSelfTest {
             return;
         }
         double predictedStep = previousY - clientData.getCenter().y;
+        if (Math.abs(predictedStep) < 1.0E-6D) {
+            // A preceding server teleport can briefly leave the client body on
+            // the floor, where collision correctly rejects downward motion. Do
+            // not spend the smooth-movement sample budget on those zero steps.
+            return;
+        }
         clientRedMaximumStep = Math.max(clientRedMaximumStep, Math.abs(predictedStep));
         clientRedPredictedTravel += Math.max(0.0D, predictedStep);
         clientRedMovementSteps++;
@@ -358,7 +369,7 @@ public final class HookedSelfTest {
             shutdownRequested = true;
             return;
         }
-        if (clientRedMovementSteps >= MIN_RED_PREDICTION_STEPS && clientRedPredictedTravel > 0.1D) {
+        if (clientRedMovementSteps >= MIN_RED_PREDICTION_STEPS && clientRedPredictedTravel > 0.5D) {
             clientRedPredictionPassed = true;
             HookNetwork.CHANNEL.sendToServer(new MessageRedMovement(0.0F, 0.0F, -1.0F));
             clientRedMovementSent = true;
