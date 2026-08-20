@@ -47,26 +47,36 @@ pullVelocity=0.15915788356999913 clientReleaseY=0.5985136930449182
 redVerticalDelta=0.25 maxRedCenterStep=0.25 lanPort=25565
 ```
 
-The client then saved and closed with process exit code 0. Strict Prehooked failure count: 0.
+The client then saved and closed with process exit code 0. The complete integrated/LAN run was repeated twice
+independently with the same marker and exit status. Strict Prehooked failure count: 0.
 
-## Dedicated-server discovery
+## Dedicated servers and remote synchronization
 
-The exact candidate was launched in both official full server fixtures. With each fixture's untouched `eula=false`,
-Forge completed mod discovery, construction, and PreInitialization before Minecraft stopped at its normal EULA gate.
-This validates dedicated-side class loading without accepting the Mojang EULA on the operator's behalf.
+The exact candidate was launched to a complete `Done` state in both official full server fixtures. The fixture operator
+explicitly authorized temporary EULA acceptance for this isolated local test. The two `eula.txt` files were restored
+to `eula=false` afterward; GTNH 2.9's temporarily disabled online mode and whitelist were also restored to
+`online-mode=true` and `white-list=true`.
 
-| GTNH release | Full mod count | Baubles Expanded | Prehooked result |
+| GTNH release | Full mod count | Baubles Expanded | Full-start result |
 | --- | ---: | --- | --- |
-| `2.9.0-beta-2` | 295 | `2.2.21-GTNH` | 1.1.0 construction and PreInit completed; 0 strict Prehooked errors |
-| `2.8.4` | 288 | `2.1.19-GTNH` | 1.1.0 construction and PreInit completed; 0 strict Prehooked errors |
+| `2.9.0-beta-2` | 295 | `2.2.21-GTNH` | `Done (6.612s)`; clean save and exit code 0 |
+| `2.8.4` | 288 | `2.1.19-GTNH` | `Done (8.608s)`; clean save and exit code 0 |
 
-The recorded Prehooked PreInitialization time was 0.025 seconds in both fixtures. A full world start, remote custom
-configuration exchange, and disconnect restore check require the fixture operator to accept the Mojang EULA and are
-reported separately when authorized.
+GTNH 2.9 then accepted the offline `HookedQA` client and supplied a deliberately different server configuration:
+`searchLocations=15`, Red Hook flight disabled, and Wooden Hook values of 3 anchors, 12-block range, 0.75 projectile
+speed, 0.35 player pull speed, and 0.65 retract speed. The client asserted every value, disconnected itself, asserted
+that its local `searchLocations=1`, Red Hook flight, and default Wooden Hook values had been restored, and exited 0.
+
+```text
+HOOKED_CONFIG_SYNC_TEST_PASS serverSearch=15 localSearch=1 disconnectRestore=true
+```
+
+Both servers were stopped through their consoles and saved normally. A strict scan of both server logs and the
+successful client log found no Prehooked `ERROR`, `FATAL`, failed assertion, or exception.
 
 ## Scope
 
 This is compatibility evidence for the named pack releases and exact artifact, not a promise about future GTNH
-snapshots or every third-party add-on combination. Re-run the build, integrated/LAN test, dedicated discovery, and
+snapshots or every third-party add-on combination. Re-run the build, integrated/LAN test, dedicated full start, and
 remote synchronization test after runtime-code or dependency changes; compare checksums before treating different
 files as the same candidate.
