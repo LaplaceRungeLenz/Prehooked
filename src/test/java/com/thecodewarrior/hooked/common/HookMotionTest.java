@@ -1,6 +1,7 @@
 package com.thecodewarrior.hooked.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -10,7 +11,7 @@ public class HookMotionTest {
     private static final double EPSILON = 1.0E-9D;
 
     @Test
-    public void stationaryReleaseReachesApproximatelyTwoBlocks() {
+    public void stationaryReleaseReachesApproximatelyOneAndAHalfBlocks() {
         Vec3 result = HookMotion.releaseVelocity(Vec3.ZERO, HookMotion.BASE_RELEASE_JUMP_SPEED);
 
         assertEquals(0.0D, result.x, EPSILON);
@@ -23,7 +24,7 @@ public class HookMotionTest {
             height += velocity;
             velocity = (velocity - 0.08D) * 0.98D;
         }
-        assertTrue(height >= 1.95D && height <= 2.10D);
+        assertTrue(height >= 1.45D && height <= 1.55D);
     }
 
     @Test
@@ -46,5 +47,25 @@ public class HookMotionTest {
         assertEquals(2.5D, extreme.y, EPSILON);
         assertEquals(0.0D, invalid.x, EPSILON);
         assertEquals(0.0D, invalid.y, EPSILON);
+    }
+
+    @Test
+    public void stalledPullReleasesStraightUpWithoutSyntheticMomentum() {
+        Vec3 result = HookMotion
+            .releaseVelocity(new Vec3(0.8D, 0.2D, -0.4D), HookMotion.BASE_RELEASE_JUMP_SPEED, false);
+
+        assertEquals(0.0D, result.x, EPSILON);
+        assertEquals(HookMotion.BASE_RELEASE_JUMP_SPEED, result.y, EPSILON);
+        assertEquals(0.0D, result.z, EPSILON);
+    }
+
+    @Test
+    public void stalledPullRequiresAHorizontalCollisionBeforeTheAnchorIsReached() {
+        Vec3 remainingPull = new Vec3(2.0D, 1.0D, 0.0D);
+
+        assertTrue(HookMotion.isPullStalled(Vec3.ZERO, remainingPull, true));
+        assertFalse(HookMotion.isPullStalled(Vec3.ZERO, remainingPull, false));
+        assertFalse(HookMotion.isPullStalled(new Vec3(0.1D, 0.0D, 0.0D), remainingPull, true));
+        assertFalse(HookMotion.isPullStalled(Vec3.ZERO, new Vec3(0.0D, 2.0D, 0.0D), true));
     }
 }
