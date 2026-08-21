@@ -47,6 +47,7 @@ public final class HookData implements IExtendedEntityProperties {
     private int cooldown;
     private int ticksSinceSync;
     private int localReleaseGraceTicks;
+    private boolean pullStoppedByCollision;
     private boolean dirty;
 
     public static HookData get(EntityPlayer player) {
@@ -222,7 +223,10 @@ public final class HookData implements IExtendedEntityProperties {
             jumpSpeed += (player.getActivePotionEffect(Potion.jump)
                 .getAmplifier() + 1) * 0.1D;
         }
-        Vec3 velocity = HookMotion.releaseVelocity(new Vec3(player.motionX, player.motionY, player.motionZ), jumpSpeed);
+        Vec3 velocity = HookMotion.releaseVelocity(
+            new Vec3(player.motionX, player.motionY, player.motionZ),
+            jumpSpeed,
+            !pullStoppedByCollision);
         player.motionX = velocity.x;
         player.motionY = velocity.y;
         player.motionZ = velocity.z;
@@ -546,10 +550,15 @@ public final class HookData implements IExtendedEntityProperties {
 
     private void applyMovement() {
         if (center == null || hookType == null || localReleaseGraceTicks > 0) {
+            pullStoppedByCollision = false;
             return;
         }
         com.thecodewarrior.hooked.common.Vec3 pull = center
             .subtract(com.thecodewarrior.hooked.common.Vec3.waist(player));
+        pullStoppedByCollision = HookMotion.isPullStalled(
+            new Vec3(player.motionX, player.motionY, player.motionZ),
+            pull,
+            player.isCollidedHorizontally);
         double distance = pull.length();
         if (distance < 1.0E-5D) {
             player.motionX = 0.0D;
@@ -636,6 +645,7 @@ public final class HookData implements IExtendedEntityProperties {
         hooks.clear();
         center = null;
         redVerticalOffset = 0.0D;
+        pullStoppedByCollision = false;
         dirty = true;
         if (synchronize && player != null && !player.worldObj.isRemote) {
             syncNow();
