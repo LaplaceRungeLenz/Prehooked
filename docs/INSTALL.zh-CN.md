@@ -9,7 +9,7 @@ Baubles Expanded `2.2.21-GTNH` 和 `2.1.19-GTNH` 环境中验证过。模组只�
 ## 安装
 
 1. 关闭客户端和服务端。
-2. 将 `prehooked-1.1.0-gtnh.jar` 放入客户端实例的 `mods` 目录。
+2. 将 `prehooked-1.1.1-gtnh.jar` 放入客户端实例的 `mods` 目录。
 3. 多人游戏时，也把完全相同的 JAR 放入服务端的 `mods` 目录。
 4. 确认整合包中存在 Baubles Expanded。GTNH 2.8.4 和 2.9.0-beta-2 已自带所需版本。
 5. 启动游戏。首次启动会生成 `config/hooked.cfg`。
