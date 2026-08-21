@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1-gtnh - 2026-08-21
+
+- Prevented a collision-stalled pull from becoming a forward launch when jump-retracting, and lowered the stationary
+  jump-retract apex to approximately 1.5 blocks.
+- Added regression coverage for stalled-pull detection, momentum suppression, and the adjusted release height.
+
 ## 1.1.0-gtnh - 2026-08-21
 
 - Made hook lookup locations and each hook tier's range, projectile speed, player pull speed, retract speed, and
