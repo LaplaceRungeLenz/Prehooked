@@ -46,7 +46,7 @@ public final class ModItems {
                 'S',
                 "stickWood",
                 'P',
-                new ItemStack(Items.stone_pickaxe, 1, Short.MAX_VALUE),
+                new ItemStack(Items.wooden_pickaxe, 1, Short.MAX_VALUE),
                 'R',
                 rope));
         GameRegistry.addRecipe(
