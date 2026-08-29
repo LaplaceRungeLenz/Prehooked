@@ -4,8 +4,8 @@ package com.thecodewarrior.hooked.common;
 public final class HookMotion {
 
     public static final double VANILLA_JUMP_SPEED = 0.41999998688697815D;
-    /** Reaches an apex of approximately 1.5 blocks under vanilla 1.7.10 gravity. */
-    public static final double BASE_RELEASE_JUMP_SPEED = 0.46D;
+    /** Reaches an apex of approximately 1 block under vanilla 1.7.10 gravity. */
+    public static final double BASE_RELEASE_JUMP_SPEED = 0.37D;
     private static final double STALLED_HORIZONTAL_SPEED_SQUARED = 1.0E-6D;
     private static final double UNFINISHED_HORIZONTAL_PULL_SQUARED = 1.0E-4D;
     private static final double MOMENTUM_MULTIPLIER = 1.25D;

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2-gtnh - 2026-08-29
+
+- Lowered the stationary jump-retract apex from approximately 1.5 blocks to approximately 1 block while retaining
+  momentum-scaled releases during unobstructed movement.
+- Changed the Wooden Hook recipe to require a wooden pickaxe instead of a stone pickaxe.
+- Updated release-height regression coverage for the adjusted jump-retract behavior.
+
 ## 1.1.1-gtnh - 2026-08-21
 
 - Prevented a collision-stalled pull from becoming a forward launch when jump-retracting, and lowered the stationary

@@ -38,7 +38,8 @@ Default controls:
 
 - `C`: fire the equipped hook.
 - Sneak + `C`: retract the hook currently under the crosshair.
-- Jump: retract all hooks, preserve horizontal momentum, and jump higher when released with more current velocity.
+- Jump: retract all hooks, gain about one block of lift when stationary, preserve horizontal momentum, and jump higher
+  when released with more current velocity.
 - Red Hook: WASD, jump, and sneak move inside the region bounded by planted anchors. Double-tap jump to retract.
 - Sneak + right-click a multi-anchor hook item: toggle its one-anchor limit.
 

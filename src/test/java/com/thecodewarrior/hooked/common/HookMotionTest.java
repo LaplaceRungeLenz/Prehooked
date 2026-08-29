@@ -11,7 +11,7 @@ public class HookMotionTest {
     private static final double EPSILON = 1.0E-9D;
 
     @Test
-    public void stationaryReleaseReachesApproximatelyOneAndAHalfBlocks() {
+    public void stationaryReleaseReachesApproximatelyOneBlock() {
         Vec3 result = HookMotion.releaseVelocity(Vec3.ZERO, HookMotion.BASE_RELEASE_JUMP_SPEED);
 
         assertEquals(0.0D, result.x, EPSILON);
@@ -24,7 +24,7 @@ public class HookMotionTest {
             height += velocity;
             velocity = (velocity - 0.08D) * 0.98D;
         }
-        assertTrue(height >= 1.45D && height <= 1.55D);
+        assertTrue(height >= 0.95D && height <= 1.05D);
     }
 
     @Test
