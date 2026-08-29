@@ -5,7 +5,7 @@
 Prehooked is a Minecraft 1.7.10 port of the original
 [Hooked](https://github.com/thecodewarrior/Hooked) grappling-hook mod. It keeps the five original hook tiers and
 integrates directly with the Baubles Expanded inventory used by GT New Horizons.
-This mod is originally developed for personal use.
+This mod is developed for personal use.
 
 ## Compatibility
 
