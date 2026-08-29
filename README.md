@@ -1,4 +1,4 @@
-# Prehooked 1.7.10 / GTNH Port
+# Prehooked 1.7.10
 
 中文说明见 [docs/INSTALL.zh-CN.md](docs/INSTALL.zh-CN.md)。
 
